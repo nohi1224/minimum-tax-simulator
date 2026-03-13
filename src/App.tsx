@@ -100,19 +100,26 @@ function MetricCard({ label, value, sub, accent = C.gold }) {
   );
 }
 
-function SliderInput({ label, value, onChange, min = 0, max = 500000, step = 100, suffix = "万円" }) {
+function SliderInput({ label, value, onChange, min = 0, max = 200000, step = 100 }) {
   const displayVal = fmtOkuMan(value);
+  const sliderValue = Math.min(value, max);
   return (
     <div style={{ marginBottom: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8, flexWrap: "wrap", gap: 4 }}>
         <label style={{ fontSize: 13, color: C.textSecondary, fontWeight: 500 }}>{label}</label>
         <span style={{ fontSize: 15, fontWeight: 600, color: C.goldText, fontFeatureSettings: "'tnum'" }}>{displayVal}</span>
       </div>
-      <input type="range" min={min} max={max} step={step} value={value}
+      <input type="range" min={min} max={max} step={step} value={sliderValue}
         onChange={e => onChange(Number(e.target.value))}
         style={{ width: "100%", accentColor: C.gold, height: 6, cursor: "pointer" }} />
       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: C.textMuted, marginTop: 4 }}>
         <span>{fmtOku(min)}</span><span>{fmtOku(max)}</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 6, padding: "6px 12px", marginTop: 8 }}>
+        <input type="number" value={value || ""} onChange={e => { const v = Number(e.target.value); if (v >= 0) onChange(v); }}
+          placeholder="0"
+          style={{ background: "transparent", border: "none", outline: "none", color: C.textPrimary, fontSize: 14, width: "100%", fontFeatureSettings: "'tnum'" }} />
+        <span style={{ fontSize: 12, color: C.textMuted, whiteSpace: "nowrap", marginLeft: 8 }}>万円</span>
       </div>
     </div>
   );
@@ -136,7 +143,6 @@ function PresetButtons({ onSelect }) {
   const presets = [
     { label: "3億", value: 30000 }, { label: "5億", value: 50000 },
     { label: "10億", value: 100000 }, { label: "20億", value: 200000 },
-    { label: "50億", value: 500000 },
   ];
   return (
     <div style={{ display: "flex", gap: 6, marginBottom: 16, flexWrap: "wrap" }}>
@@ -302,7 +308,7 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
 function InputPanel({ stockPrice, setStockPrice, stockCost, setStockCost, showDetail, setShowDetail, salaryRev, setSalaryRev, otherIncome, setOtherIncome, deductions, setDeductions, netMode, setNetMode, isMobile }) {
   return (
     <>
-      <SliderInput label="株式譲渡価額（売却価格）" value={stockPrice} onChange={setStockPrice} min={0} max={500000} step={500} />
+      <SliderInput label="株式譲渡価額（売却価格）" value={stockPrice} onChange={setStockPrice} min={0} max={200000} step={500} />
       <PresetButtons onSelect={setStockPrice} />
       <NumberInput label="株式取得価額（簿価）" value={stockCost} onChange={setStockCost} />
 
@@ -368,7 +374,7 @@ export default function App() {
   const after = useMemo(() => calcTaxes(params, MT_AFTER), [params]);
 
   const chartData = useMemo(() => {
-    const points = [0, 5000, 10000, 15000, 20000, 25000, 30000, 33000, 35000, 40000, 50000, 60000, 80000, 100000, 150000, 200000, 300000, 500000];
+    const points = [0, 5000, 10000, 15000, 20000, 25000, 30000, 33000, 35000, 40000, 50000, 60000, 80000, 100000, 150000, 200000];
     return points.map(amt => {
       const p = { ...params, stockPrice: amt };
       const b = calcTaxes(p, MT_BEFORE);
@@ -378,7 +384,7 @@ export default function App() {
   }, [params]);
 
   const sensitivityData = useMemo(() => {
-    return [10000, 20000, 30000, 50000, 100000, 200000, 500000].map(amt => {
+    return [10000, 20000, 30000, 50000, 100000, 150000, 200000].map(amt => {
       const p = { ...params, stockPrice: amt };
       const b = calcTaxes(p, MT_BEFORE);
       const a = calcTaxes(p, MT_AFTER);
