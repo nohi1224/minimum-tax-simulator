@@ -17,7 +17,7 @@ body {
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  background: rgba(255, 255, 255, 0.1);
+  background: #E2E8F0;
   border-radius: 4px;
   outline: none;
 }
@@ -28,19 +28,19 @@ input[type="range"]::-webkit-slider-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #c9a84c;
+  background: #2563EB;
   cursor: pointer;
-  border: 2px solid #0b1426;
-  box-shadow: 0 0 4px rgba(201, 168, 76, 0.3);
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 0 1px #2563EB;
 }
 
 input[type="range"]::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #c9a84c;
+  background: #2563EB;
   cursor: pointer;
-  border: 2px solid #0b1426;
+  border: 2px solid #FFFFFF;
 }
 
 /* Number input spinner removal */
@@ -58,10 +58,10 @@ input[type="number"] {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: #CBD5E1;
   border-radius: 3px;
 }
 
