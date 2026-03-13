@@ -82,6 +82,48 @@ const C = {
 };
 
 // ─── Components ───
+function HelpTip({ text }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span style={{ position: "relative", display: "inline-flex", marginLeft: 4, verticalAlign: "middle" }}>
+      <span
+        onClick={() => setShow(!show)}
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        style={{
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: 16, height: 16, borderRadius: "50%", fontSize: 10, fontWeight: 600,
+          background: C.border, color: C.textSecondary, cursor: "pointer", userSelect: "none",
+          lineHeight: 1,
+        }}>?</span>
+      {show && (
+        <div style={{
+          position: "absolute", bottom: "calc(100% + 6px)", left: "50%", transform: "translateX(-50%)",
+          background: C.textPrimary, color: C.white, fontSize: 11, lineHeight: 1.6,
+          padding: "8px 12px", borderRadius: 6, width: 220, zIndex: 100,
+          pointerEvents: "none",
+        }}>
+          {text}
+          <div style={{
+            position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)",
+            width: 0, height: 0, borderLeft: "5px solid transparent", borderRight: "5px solid transparent",
+            borderTop: `5px solid ${C.textPrimary}`,
+          }} />
+        </div>
+      )}
+    </span>
+  );
+}
+
+function LabelWithHelp({ label, help }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center" }}>
+      {label}
+      {help && <HelpTip text={help} />}
+    </span>
+  );
+}
+
 function Card({ children, className = "", style = {} }) {
   return (
     <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 8, padding: "20px 24px", ...style }} className={className}>
@@ -100,13 +142,13 @@ function MetricCard({ label, value, sub, accent = C.gold }) {
   );
 }
 
-function SliderInput({ label, value, onChange, min = 0, max = 200000, step = 100 }) {
+function SliderInput({ label, value, onChange, min = 0, max = 200000, step = 100, help = "" }) {
   const displayVal = fmtOkuMan(value);
   const sliderValue = Math.min(value, max);
   return (
     <div style={{ marginBottom: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8, flexWrap: "wrap", gap: 4 }}>
-        <label style={{ fontSize: 13, color: C.textSecondary, fontWeight: 500 }}>{label}</label>
+        <label style={{ fontSize: 13, color: C.textSecondary, fontWeight: 500 }}><LabelWithHelp label={label} help={help} /></label>
         <span style={{ fontSize: 15, fontWeight: 600, color: C.goldText, fontFeatureSettings: "'tnum'" }}>{displayVal}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={sliderValue}
@@ -125,10 +167,10 @@ function SliderInput({ label, value, onChange, min = 0, max = 200000, step = 100
   );
 }
 
-function NumberInput({ label, value, onChange, placeholder = "0" }) {
+function NumberInput({ label, value, onChange, placeholder = "0", help = "" }) {
   return (
     <div style={{ marginBottom: 14 }}>
-      <label style={{ fontSize: 12, color: C.textSecondary, display: "block", marginBottom: 4 }}>{label}</label>
+      <label style={{ fontSize: 12, color: C.textSecondary, display: "block", marginBottom: 4 }}><LabelWithHelp label={label} help={help} /></label>
       <div style={{ display: "flex", alignItems: "center", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 6, padding: "8px 12px" }}>
         <input type="number" value={value || ""} onChange={e => onChange(Number(e.target.value) || 0)}
           placeholder={placeholder}
@@ -308,9 +350,11 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
 function InputPanel({ stockPrice, setStockPrice, stockCost, setStockCost, showDetail, setShowDetail, salaryRev, setSalaryRev, otherIncome, setOtherIncome, deductions, setDeductions, netMode, setNetMode, isMobile }) {
   return (
     <>
-      <SliderInput label="株式譲渡価額（売却価格）" value={stockPrice} onChange={setStockPrice} min={0} max={200000} step={500} />
+      <SliderInput label="株式譲渡価額（売却価格）" value={stockPrice} onChange={setStockPrice} min={0} max={200000} step={500}
+        help="会社の株式を売却する際の売買価格です。M&Aで提示されている金額を入力してください。" />
       <PresetButtons onSelect={setStockPrice} />
-      <NumberInput label="株式取得価額（簿価）" value={stockCost} onChange={setStockCost} />
+      <NumberInput label="株式取得価額（簿価）" value={stockCost} onChange={setStockCost}
+        help="株式を最初に取得した際の金額です。創業者の場合は設立時の出資額（資本金）になります。不明な場合は0円のままで概算できます。" />
 
       <button onClick={() => setShowDetail(!showDetail)}
         style={{ width: "100%", padding: "8px 14px", fontSize: 12, color: C.textSecondary, background: "#F8FAFC", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", marginTop: 8, marginBottom: showDetail ? 16 : 0, textAlign: "left", transition: "all 0.2s" }}>
@@ -319,9 +363,12 @@ function InputPanel({ stockPrice, setStockPrice, stockCost, setStockCost, showDe
 
       {showDetail && (
         <div style={{ animation: "fadeIn 0.2s" }}>
-          <NumberInput label="給与収入（年収）" value={salaryRev} onChange={setSalaryRev} />
-          <NumberInput label="その他の総合課税所得" value={otherIncome} onChange={setOtherIncome} />
-          <NumberInput label="所得控除合計" value={deductions} onChange={setDeductions} placeholder="200" />
+          <NumberInput label="給与収入（年収）" value={salaryRev} onChange={setSalaryRev}
+            help="会社からの役員報酬や給与の年収額面です。手取りではなく、額面（税引前）の金額を入力してください。" />
+          <NumberInput label="その他の総合課税所得" value={otherIncome} onChange={setOtherIncome}
+            help="不動産収入や事業所得など、給与・株式譲渡以外の所得がある場合に入力します。特になければ0円のままで構いません。" />
+          <NumberInput label="所得控除合計" value={deductions} onChange={setDeductions} placeholder="200"
+            help="基礎控除（48万円）や社会保険料控除などの合計です。一般的な会社役員の場合、200万円前後が目安です。" />
         </div>
       )}
 
