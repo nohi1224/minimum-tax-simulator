@@ -132,11 +132,11 @@ function Card({ children, className = "", style = {} }) {
   );
 }
 
-function MetricCard({ label, value, sub, accent = C.gold }) {
+function MetricCard({ label, value, sub, accent = C.gold, valueColor }) {
   return (
     <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 8, padding: "12px 16px", borderLeft: `3px solid ${accent}` }}>
       <div style={{ fontSize: 12, color: C.textSecondary, marginBottom: 4, letterSpacing: 0.5 }}>{label}</div>
-      <div style={{ fontSize: 20, fontWeight: 600, color: C.textPrimary, fontFeatureSettings: "'tnum'", wordBreak: "break-all" }}>{value}</div>
+      <div style={{ fontSize: 20, fontWeight: 600, color: valueColor || C.textPrimary, fontFeatureSettings: "'tnum'", wordBreak: "break-all" }}>{value}</div>
       {sub && <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>{sub}</div>}
     </div>
   );
@@ -302,8 +302,12 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
       {/* 2. メイン結果 + 参考カード */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr", gap: 10, marginBottom: 20 }}>
         <div style={{ background: C.greenDim, borderRadius: 8, padding: "14px 16px", border: `1px solid #A7F3D0` }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: "#059669" }}>年度またぎの売却結果</div>
-          <div style={{ fontSize: 10, color: C.textMuted, marginTop: 2 }}>2026年に{fmtOkuMan(scenarios.y1Price)} + 2027年に{fmtOkuMan(scenarios.y2Price)}</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: "#059669" }}>
+            {splitRatio === 0 ? "2027年に一括売却した場合" : splitRatio === 100 ? "2026年に一括売却した場合" : "年度またぎの売却結果"}
+          </div>
+          <div style={{ fontSize: 10, color: C.textMuted, marginTop: 2 }}>
+            {splitRatio === 0 ? `全額（${fmtOkuMan(total)}）を2027年に売却` : splitRatio === 100 ? `全額（${fmtOkuMan(total)}）を2026年に売却` : `2026年に${fmtOkuMan(scenarios.y1Price)} + 2027年に${fmtOkuMan(scenarios.y2Price)}`}
+          </div>
           <div style={{ fontSize: 20, fontWeight: 600, color: "#059669", marginTop: 8 }}>{fmtOkuMan(cNet)}</div>
           <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>実効税率 {fmtPct(cEff)}</div>
         </div>
@@ -558,9 +562,10 @@ export default function App() {
                 <MetricCard label="株式譲渡所得" value={fmtOkuMan(before.stockIncome)} accent={C.gold} />
                 <MetricCard
                   label="増税額"
-                  value={diffTax > 0 ? `▲${fmtOkuMan(diffTax)}` : "影響なし"}
-                  sub={diffTax > 0 ? `手取り ${fmtOkuMan(diff)}` : ""}
+                  value={diffTax > 0 ? `▲${fmtOkuMan(diffTax)}` : diffTax < 0 ? `▼${fmtOkuMan(Math.abs(diffTax))}` : "影響なし"}
+                  sub={diffTax !== 0 ? `手取り ${fmtOkuMan(diff)}` : ""}
                   accent={diffTax > 0 ? C.red : C.green}
+                  valueColor={diffTax !== 0 ? C.redText : undefined}
                 />
                 <MetricCard label="改正前 手取り" value={fmtOkuMan(before.maNet)} sub={`税率 ${fmtPct(before.effMA)}`} accent={C.blue} />
                 <MetricCard label="改正後 手取り" value={fmtOkuMan(after.maNet)} sub={`税率 ${fmtPct(after.effMA)}`} accent={C.red} />
