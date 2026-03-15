@@ -471,8 +471,8 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
 function InputPanel({ stockPrice, setStockPrice, stockCost, setStockCost, showDetail, setShowDetail, salaryRev, setSalaryRev, otherIncome, setOtherIncome, deductions, setDeductions, netMode, setNetMode, isMobile }) {
   return (
     <>
-      <SliderInput label="株式譲渡価額（売却価格）" value={stockPrice} onChange={setStockPrice} min={0} max={200000} step={500}
-        help="会社の株式を売却する際の売買価格です。M&Aで提示されている金額を入力してください。" />
+      <SliderInput label="株式譲渡価額（売却価額）" value={stockPrice} onChange={setStockPrice} min={0} max={200000} step={500}
+        help="会社の株式を売却する際の売買価額です。M&Aで提示されている金額、または想定される売却金額を入力してください。" />
       <PresetButtons onSelect={setStockPrice} />
       <NumberInput label="株式取得価額（簿価）" value={stockCost} onChange={setStockCost}
         help="株式を最初に取得した際の金額です。創業者の場合は設立時の出資額（資本金）になります。不明な場合は0円のままで概算できます。" />
@@ -667,7 +667,7 @@ export default function App() {
                   width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent",
                   borderBottom: `6px solid ${C.textPrimary}`,
                 }} />
-                まず上のボタンを押して、<strong>株式の売却価格</strong>を入力してください。
+                まず上のボタンを押して、<strong>株式の売却価額</strong>を入力してください。
                 <span style={{ fontSize: 10, color: "#94A3B8", marginLeft: 8 }}>タップで閉じる</span>
               </div>
             )}
@@ -806,7 +806,7 @@ export default function App() {
                 background: C.textPrimary, color: C.white, fontSize: 12, lineHeight: 1.6,
                 animation: "fadeIn 0.3s", cursor: "pointer",
               }}>
-                まず下の入力欄で、<strong>株式の売却価格</strong>を入力してください。
+                まず下の入力欄で、<strong>株式の売却価額</strong>を入力してください。
                 <span style={{ fontSize: 10, color: "#94A3B8", marginLeft: 8 }}>クリックで閉じる</span>
               </div>
             )}
