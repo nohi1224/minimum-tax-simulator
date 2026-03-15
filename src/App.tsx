@@ -651,6 +651,17 @@ export default function App() {
 
           {activeTab === "compare" ? (
             <>
+              {/* MT threshold banner */}
+              <div style={{
+                padding: "8px 12px", borderRadius: 6, marginBottom: 12, fontSize: 12, lineHeight: 1.6,
+                background: before.stockIncome > 33000 ? "#FEF2F2" : "#F0FDF4",
+                border: `1px solid ${before.stockIncome > 33000 ? "#FECACA" : "#BBF7D0"}`,
+                color: before.stockIncome > 33000 ? C.redText : "#166534",
+              }}>
+                {before.stockIncome > 33000
+                  ? <>譲渡所得が<strong>約3.3億円を超えている</strong>ため、ミニマムタックスによる追加課税が発生します</>
+                  : <>譲渡所得が約3.3億円以下のため、ミニマムタックスの影響は<strong>ありません</strong></>}
+              </div>
               {/* Hero Metrics - 2x2 grid on mobile */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                 <MetricCard label="株式譲渡所得" value={fmtOkuMan(before.stockIncome)} accent={C.gold} />
@@ -766,6 +777,17 @@ export default function App() {
           <div style={{ padding: 24, overflowY: "auto" }}>
             {activeTab === "compare" ? (
               <>
+                {/* MT threshold banner */}
+                <div style={{
+                  padding: "10px 14px", borderRadius: 6, marginBottom: 16, fontSize: 13, lineHeight: 1.6,
+                  background: before.stockIncome > 33000 ? "#FEF2F2" : "#F0FDF4",
+                  border: `1px solid ${before.stockIncome > 33000 ? "#FECACA" : "#BBF7D0"}`,
+                  color: before.stockIncome > 33000 ? C.redText : "#166534",
+                }}>
+                  {before.stockIncome > 33000
+                    ? <>譲渡所得が<strong>約3.3億円を超えている</strong>ため、ミニマムタックスによる追加課税が発生します</>
+                    : <>譲渡所得が約3.3億円以下のため、ミニマムタックスの影響は<strong>ありません</strong></>}
+                </div>
                 {/* Hero Metrics */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
                   <MetricCard label="株式譲渡所得" value={fmtOkuMan(before.stockIncome)} accent={C.gold} />
