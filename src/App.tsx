@@ -14,6 +14,68 @@ import {
   type MinimumTaxParams,
 } from "./lib/taxEngine";
 
+// ─── Collapsible Tax Explainer components ───
+function SplitSaleExplainer() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ marginTop: 16 }}>
+      <button onClick={() => setOpen(!open)}
+        style={{ width: "100%", padding: "8px 14px", fontSize: 12, color: C.textSecondary, background: "#F8FAFC", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}>
+        {open ? "▾" : "▸"} なぜ年度をまたぐと税負担が変わるのか？
+      </button>
+      {open && (
+        <div style={{ padding: "12px 14px", fontSize: 12, lineHeight: 1.8, color: C.textSecondary, background: "#F8FAFC", borderRadius: "0 0 6px 6px", borderTop: "none", border: `1px solid ${C.border}`, borderTopWidth: 0, animation: "fadeIn 0.2s" }}>
+          <p style={{ margin: "0 0 8px" }}>ミニマムタックスの追加税額は以下の式で計算されます：</p>
+          <div style={{ background: C.white, padding: "8px 12px", borderRadius: 4, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>
+            追加税額 = max(0,（基準所得金額 − 特別控除額）× 税率 − 基準所得税額)
+          </div>
+          <p style={{ margin: "0 0 8px" }}>売却代金を2年間に分けると、各年度にそれぞれ特別控除額が適用されるため、控除を2回使える分だけ課税ベースが小さくなり、税負担が軽減される場合があります。</p>
+          <ul style={{ margin: "0 0 8px", paddingLeft: 20 }}>
+            <li>改正前（2026年）: 特別控除 3億3,000万円 / 税率 22.5%</li>
+            <li>改正後（2027年〜）: 特別控除 1億6,500万円 / 税率 30%</li>
+          </ul>
+          <p style={{ margin: 0 }}>ただし、2027年以降の分には改正後の厳しい条件が適用されるため、分割比率によっては一括売却より不利になるケースもあります。上のスライダーで最適な比率をご確認ください。</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TaxExplainer() {
+  const [open, setOpen] = useState(false);
+  return (
+    <Card style={{ marginTop: 16 }}>
+      <button onClick={() => setOpen(!open)}
+        style={{ width: "100%", padding: "8px 14px", fontSize: 12, color: C.textSecondary, background: "#F8FAFC", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}>
+        {open ? "▾" : "▸"} ミニマムタックスの計算方法
+      </button>
+      {open && (
+        <div style={{ padding: "12px 14px", fontSize: 12, lineHeight: 1.8, color: C.textSecondary, background: "#F8FAFC", borderRadius: "0 0 6px 6px", borderTop: "none", border: `1px solid ${C.border}`, borderTopWidth: 0, animation: "fadeIn 0.2s" }}>
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>【通常の税額】</div>
+          <p style={{ margin: "0 0 8px" }}>株式譲渡所得 × 15%（所得税）+ 5%（住民税）= 約20.315%（復興税含む）</p>
+
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>【ミニマムタックス追加税額】</div>
+          <div style={{ background: C.white, padding: "8px 12px", borderRadius: 4, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>
+            追加税額 = max(0,（基準所得金額 − 特別控除額）× 税率 − 基準所得税額)
+          </div>
+          <ul style={{ margin: "0 0 8px", paddingLeft: 20 }}>
+            <li>基準所得金額: 所得控除「前」の全所得合計</li>
+            <li>基準所得税額: 所得控除「後」の通常の税額合計</li>
+            <li>住民税にはミニマムタックスは適用されません</li>
+          </ul>
+
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>【改正前後の違い】</div>
+          <ul style={{ margin: "0 0 8px", paddingLeft: 20 }}>
+            <li>改正前（〜2026年）: 特別控除 3億3,000万円 / 税率 22.5%</li>
+            <li>改正後（2027年〜）: 特別控除 1億6,500万円 / 税率 30%</li>
+          </ul>
+          <p style={{ margin: 0 }}>改正後は対象となる所得水準が大幅に引き下げられ、税率も上がるため、約3.3億円超の譲渡所得から追加課税の影響が出始めます。</p>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 // Adapter: convert component state to TaxInput
 function toTaxInput(p: {
   stockPrice: number; stockCost: number; salaryRev: number;
@@ -392,6 +454,7 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
       <div style={{ fontSize: 11, color: C.textSecondary, textAlign: "center", marginTop: 6 }}>
         {!isMobile && <span style={{ color: C.textMuted }}>--- 青線: 全額を2026年に売却した場合</span>}
       </div>
+      <SplitSaleExplainer />
     </Card>
   );
 }
@@ -499,38 +562,61 @@ export default function App() {
     <div style={{ minHeight: "100vh", background: C.bg, color: C.textPrimary, fontFamily: "'Noto Sans JP', 'Helvetica Neue', sans-serif" }}>
       {/* Header */}
       <div style={{
-        borderBottom: `1px solid ${C.border}`, padding: isMobile ? "12px 16px" : "16px 24px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        background: C.white, flexWrap: isMobile ? "wrap" : "nowrap", gap: isMobile ? 8 : 0,
+        borderBottom: `1px solid ${C.border}`,
+        background: C.white,
+        ...(isMobile
+          ? { display: "flex", flexDirection: "column" }
+          : { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px" }),
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {/* Row 1: Logo + Title */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: isMobile ? "10px 16px" : 0 }}>
           <img src="/willgate-ma-logo.png" alt="ウィルゲートM&A" style={{ height: isMobile ? 24 : 30, flexShrink: 0 }} />
           <div style={{ borderLeft: `1px solid ${C.border}`, paddingLeft: 12 }}>
             <div style={{ fontSize: isMobile ? 13 : 15, fontWeight: 600, letterSpacing: 0.5 }}>ミニマムタックス シミュレーター</div>
             {!isMobile && <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: 0.8, textTransform: "uppercase" }}>M&A Tax Impact Analysis — 2026年度税制改正対応</div>}
           </div>
         </div>
-        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          {["compare", "split"].map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)}
+        {/* Row 2 (mobile) / inline (desktop): Tabs + About */}
+        <div style={{
+          display: "flex", gap: 6, alignItems: "center",
+          ...(isMobile
+            ? { padding: "8px 16px", borderTop: `1px solid ${C.border}`, background: "#FAFBFC", justifyContent: "space-between" }
+            : {}),
+        }}>
+          <div style={{ display: "flex", gap: 6 }}>
+            {["compare", "split"].map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)}
+                style={{
+                  padding: isMobile ? "5px 12px" : "6px 16px", fontSize: 12, fontWeight: 500, borderRadius: 6, cursor: "pointer",
+                  background: activeTab === tab ? C.goldDim : "transparent",
+                  color: activeTab === tab ? C.goldText : C.textSecondary,
+                  border: `1px solid ${activeTab === tab ? "#BFDBFE" : C.border}`,
+                  transition: "all 0.2s",
+                }}>
+                {tab === "compare" ? "改正前後比較" : "年度またぎの売却"}
+              </button>
+            ))}
+          </div>
+          {isMobile ? (
+            <button onClick={() => setShowAbout(true)}
               style={{
-                padding: isMobile ? "5px 12px" : "6px 16px", fontSize: 12, fontWeight: 500, borderRadius: 6, cursor: "pointer",
-                background: activeTab === tab ? C.goldDim : "transparent",
-                color: activeTab === tab ? C.goldText : C.textSecondary,
-                border: `1px solid ${activeTab === tab ? "#BFDBFE" : C.border}`,
-                transition: "all 0.2s",
-              }}>
-              {tab === "compare" ? "改正前後比較" : "年度またぎの売却"}
+                width: 28, height: 28, fontSize: 14, fontWeight: 600, borderRadius: "50%", cursor: "pointer",
+                background: "transparent", color: C.textMuted, border: `1px solid ${C.border}`,
+                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+              }}
+              title="このツールについて">
+              ?
             </button>
-          ))}
-          <button onClick={() => setShowAbout(true)}
-            style={{
-              padding: isMobile ? "5px 8px" : "6px 12px", fontSize: 11, fontWeight: 400, borderRadius: 6, cursor: "pointer",
-              background: "transparent", color: C.textMuted, border: "none",
-              textDecoration: "underline", textUnderlineOffset: 2,
-            }}>
-            このツールについて
-          </button>
+          ) : (
+            <button onClick={() => setShowAbout(true)}
+              style={{
+                padding: "6px 12px", fontSize: 11, fontWeight: 400, borderRadius: 6, cursor: "pointer",
+                background: "transparent", color: C.textMuted, border: "none",
+                textDecoration: "underline", textUnderlineOffset: 2,
+              }}>
+              このツールについて
+            </button>
+          )}
         </div>
       </div>
 
@@ -654,6 +740,7 @@ export default function App() {
                   ))}
                 </div>
               </Card>
+              <TaxExplainer />
             </>
           ) : (
             <SplitSaleSimulation stockPrice={stockPrice} stockCost={stockCost} params={params} isMobile />
@@ -771,6 +858,7 @@ export default function App() {
                     </table>
                   </div>
                 </Card>
+                <TaxExplainer />
               </>
             ) : (
               <SplitSaleSimulation stockPrice={stockPrice} stockCost={stockCost} params={params} isMobile={false} />
