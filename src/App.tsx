@@ -568,6 +568,10 @@ export default function App() {
 
   const diff = after.maNet - before.maNet;
   const diffTax = after.stockTotalTax - before.stockTotalTax;
+  /** 増税額がこれ以下なら「影響なし」とみなす（万円）。バナーと数値の整合用 */
+  const noImpactThreshold = 1;
+  const hasNoImpact = diffTax <= noImpactThreshold;
+  const hasLargeImpact = before.stockIncome > 33000 && diffTax > noImpactThreshold;
 
   const inputPanelProps = { stockPrice, setStockPrice, stockCost, setStockCost, showDetail, setShowDetail, salaryRev, setSalaryRev, otherIncome, setOtherIncome, deductions, setDeductions, netMode, setNetMode, isMobile };
 
@@ -656,26 +660,30 @@ export default function App() {
 
           {activeTab === "compare" ? (
             <>
-              {/* MT threshold banner */}
+              {/* MT threshold banner（増税額に連動） */}
               <div style={{
                 padding: "8px 12px", borderRadius: 6, marginBottom: 12, fontSize: 12, lineHeight: 1.6,
-                background: before.stockIncome > 33000 ? "#FEF2F2" : "#F0FDF4",
-                border: `1px solid ${before.stockIncome > 33000 ? "#FECACA" : "#BBF7D0"}`,
-                color: before.stockIncome > 33000 ? C.redText : "#166534",
+                ...(hasNoImpact
+                  ? { background: "#F0FDF4", border: "1px solid #BBF7D0", color: "#166534" }
+                  : hasLargeImpact
+                    ? { background: "#FEF2F2", border: "1px solid #FECACA", color: C.redText }
+                    : { background: "#FFFBEB", border: "1px solid #FDE68A", color: "#92400E" }),
               }}>
-                {before.stockIncome > 33000
-                  ? <>譲渡所得が<strong>約3.3億円を超えている</strong>ため、ミニマムタックスによる追加課税が発生します</>
-                  : <>譲渡所得が約3.3億円以下のため、ミニマムタックスの影響は<strong>ありません</strong></>}
+                {hasNoImpact
+                  ? <>改正前後で手取りに<strong>実質的な差はありません</strong>（ミニマムタックスの影響なし）</>
+                  : hasLargeImpact
+                    ? <>譲渡所得が<strong>約3.3億円を超えている</strong>ため、ミニマムタックスによる追加課税が発生します</>
+                    : <>改正により<strong>わずかな差</strong>があります（基準所得・税率の変更による）</>}
               </div>
               {/* Hero Metrics - 2x2 grid on mobile */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                 <MetricCard label="株式譲渡所得" value={fmtOkuMan(before.stockIncome)} accent={C.gold} />
                 <MetricCard
                   label="増税額"
-                  value={diffTax > 0 ? `▲${fmtOkuMan(diffTax)}` : diffTax < 0 ? `▼${fmtOkuMan(Math.abs(diffTax))}` : "影響なし"}
-                  sub={diffTax !== 0 ? `手取り ${fmtOkuMan(diff)}` : ""}
-                  accent={diffTax > 0 ? C.red : C.green}
-                  valueColor={diffTax !== 0 ? C.redText : undefined}
+                  value={hasNoImpact ? "影響なし" : diffTax > 0 ? `▲${fmtOkuMan(diffTax)}` : `▼${fmtOkuMan(Math.abs(diffTax))}`}
+                  sub={!hasNoImpact ? `手取り ${fmtOkuMan(diff)}` : ""}
+                  accent={hasNoImpact ? C.green : diffTax > 0 ? C.red : C.green}
+                  valueColor={!hasNoImpact && diffTax > 0 ? C.redText : undefined}
                 />
                 <MetricCard label="改正前 手取り" value={fmtOkuMan(before.maNet)} sub={`税率 ${fmtPct(before.effMA)}`} accent={C.blue} />
                 <MetricCard label="改正後 手取り" value={fmtOkuMan(after.maNet)} sub={`税率 ${fmtPct(after.effMA)}`} accent={C.red} />
@@ -782,16 +790,20 @@ export default function App() {
           <div style={{ padding: 24, overflowY: "auto" }}>
             {activeTab === "compare" ? (
               <>
-                {/* MT threshold banner */}
+                {/* MT threshold banner（増税額に連動） */}
                 <div style={{
                   padding: "10px 14px", borderRadius: 6, marginBottom: 16, fontSize: 13, lineHeight: 1.6,
-                  background: before.stockIncome > 33000 ? "#FEF2F2" : "#F0FDF4",
-                  border: `1px solid ${before.stockIncome > 33000 ? "#FECACA" : "#BBF7D0"}`,
-                  color: before.stockIncome > 33000 ? C.redText : "#166534",
+                  ...(hasNoImpact
+                    ? { background: "#F0FDF4", border: "1px solid #BBF7D0", color: "#166534" }
+                    : hasLargeImpact
+                      ? { background: "#FEF2F2", border: "1px solid #FECACA", color: C.redText }
+                      : { background: "#FFFBEB", border: "1px solid #FDE68A", color: "#92400E" }),
                 }}>
-                  {before.stockIncome > 33000
-                    ? <>譲渡所得が<strong>約3.3億円を超えている</strong>ため、ミニマムタックスによる追加課税が発生します</>
-                    : <>譲渡所得が約3.3億円以下のため、ミニマムタックスの影響は<strong>ありません</strong></>}
+                  {hasNoImpact
+                    ? <>改正前後で手取りに<strong>実質的な差はありません</strong>（ミニマムタックスの影響なし）</>
+                    : hasLargeImpact
+                      ? <>譲渡所得が<strong>約3.3億円を超えている</strong>ため、ミニマムタックスによる追加課税が発生します</>
+                      : <>改正により<strong>わずかな差</strong>があります（基準所得・税率の変更による）</>}
                 </div>
                 {/* Hero Metrics */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
@@ -800,9 +812,9 @@ export default function App() {
                   <MetricCard label="改正後 手取り" value={fmtOkuMan(after.maNet)} sub={`実効税率 ${fmtPct(after.effMA)}`} accent={C.red} />
                   <MetricCard
                     label="増税額"
-                    value={diffTax > 0 ? `▲${fmtOkuMan(diffTax)}` : "影響なし"}
-                    sub={diffTax > 0 ? `手取り ${fmtOkuMan(diff)}` : ""}
-                    accent={diffTax > 0 ? C.red : C.green}
+                    value={hasNoImpact ? "影響なし" : diffTax > 0 ? `▲${fmtOkuMan(diffTax)}` : `▼${fmtOkuMan(Math.abs(diffTax))}`}
+                    sub={!hasNoImpact ? `手取り ${fmtOkuMan(diff)}` : ""}
+                    accent={hasNoImpact ? C.green : diffTax > 0 ? C.red : C.green}
                   />
                 </div>
 
