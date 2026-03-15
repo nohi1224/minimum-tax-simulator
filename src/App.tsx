@@ -46,8 +46,8 @@ function SplitSaleExplainer() {
 function TaxExplainer() {
   return (
     <Card style={{ marginTop: 16 }}>
-      <div style={{ fontSize: 13, fontWeight: 600, color: C.textPrimary, marginBottom: 10 }}>ミニマムタックスとは</div>
-      <div style={{ fontSize: 12, lineHeight: 1.8, color: C.textSecondary }}>
+      <div style={{ fontSize: 14, fontWeight: 600, color: C.textPrimary, marginBottom: 10 }}>ミニマムタックスとは</div>
+      <div style={{ fontSize: 13, lineHeight: 1.8, color: C.textSecondary }}>
         <p style={{ margin: "0 0 8px" }}>
           株式譲渡所得には通常 約20.315% の税率が適用されますが、
           <strong style={{ color: C.goldText }}>譲渡所得が約3.3億円を超える</strong>と、
@@ -202,12 +202,12 @@ function Card({ children, className = "", style = {} }) {
   );
 }
 
-function MetricCard({ label, value, sub, accent = C.gold, valueColor }) {
+function MetricCard({ label, value, sub, accent = C.gold, valueColor, compact = false }) {
   return (
-    <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 8, padding: "12px 16px", borderLeft: `3px solid ${accent}` }}>
-      <div style={{ fontSize: 12, color: C.textSecondary, marginBottom: 4, letterSpacing: 0.5 }}>{label}</div>
-      <div style={{ fontSize: 20, fontWeight: 600, color: valueColor || C.textPrimary, fontFeatureSettings: "'tnum'", wordBreak: "break-all" }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>{sub}</div>}
+    <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 8, padding: compact ? "12px 16px" : "14px 18px", borderLeft: `3px solid ${accent}` }}>
+      <div style={{ fontSize: compact ? 12 : 13, color: C.textSecondary, marginBottom: 4, letterSpacing: 0.5 }}>{label}</div>
+      <div style={{ fontSize: compact ? 20 : 22, fontWeight: 600, color: valueColor || C.textPrimary, fontFeatureSettings: "'tnum'", wordBreak: "break-all" }}>{value}</div>
+      {sub && <div style={{ fontSize: compact ? 11 : 12, color: C.textSecondary, marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
@@ -218,8 +218,8 @@ function SliderInput({ label, value, onChange, min = 0, max = 200000, step = 100
   return (
     <div style={{ marginBottom: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8, flexWrap: "wrap", gap: 4 }}>
-        <label style={{ fontSize: 13, color: C.textSecondary, fontWeight: 500 }}><LabelWithHelp label={label} help={help} /></label>
-        <span style={{ fontSize: 15, fontWeight: 600, color: C.goldText, fontFeatureSettings: "'tnum'" }}>{displayVal}</span>
+        <label style={{ fontSize: 14, color: C.textSecondary, fontWeight: 500 }}><LabelWithHelp label={label} help={help} /></label>
+        <span style={{ fontSize: 16, fontWeight: 600, color: C.goldText, fontFeatureSettings: "'tnum'" }}>{displayVal}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={sliderValue}
         onChange={e => onChange(Number(e.target.value))}
@@ -240,7 +240,7 @@ function SliderInput({ label, value, onChange, min = 0, max = 200000, step = 100
 function NumberInput({ label, value, onChange, placeholder = "0", help = "" }) {
   return (
     <div style={{ marginBottom: 14 }}>
-      <label style={{ fontSize: 12, color: C.textSecondary, display: "block", marginBottom: 4 }}><LabelWithHelp label={label} help={help} /></label>
+      <label style={{ fontSize: 13, color: C.textSecondary, display: "block", marginBottom: 4 }}><LabelWithHelp label={label} help={help} /></label>
       <div style={{ display: "flex", alignItems: "center", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 6, padding: "8px 12px" }}>
         <input type="number" value={value || ""} onChange={e => onChange(Number(e.target.value) || 0)}
           placeholder={placeholder}
@@ -277,7 +277,7 @@ function ComparisonRow({ label, before, after, isBold, isDiff, isRate, isMobile 
       display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr",
       padding: isBold ? "10px 0" : "6px 0",
       borderTop: isBold ? `1px solid ${C.borderLight}` : "none",
-      fontSize: isBold ? (isMobile ? 12 : 14) : (isMobile ? 11 : 13),
+      fontSize: isBold ? (isMobile ? 12 : 15) : (isMobile ? 11 : 14),
       fontWeight: isBold ? 600 : 400,
       gap: isMobile ? 2 : 0,
     }}>
@@ -593,8 +593,8 @@ export default function App() {
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: isMobile ? "10px 16px" : 0 }}>
           <img src="/willgate-ma-logo.png" alt="ウィルゲートM&A" style={{ height: isMobile ? 24 : 30, flexShrink: 0 }} />
           <div style={{ borderLeft: `1px solid ${C.border}`, paddingLeft: 12 }}>
-            <div style={{ fontSize: isMobile ? 13 : 15, fontWeight: 600, letterSpacing: 0.5, ...(isMobile ? { wordBreak: "keep-all", overflowWrap: "break-word" } : {}) }}>ミニマムタックス{isMobile ? " " : " "}シミュレーター</div>
-            {!isMobile && <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: 0.8 }}>2026年度税制改正対応</div>}
+            <div style={{ fontSize: isMobile ? 13 : 16, fontWeight: 600, letterSpacing: 0.5, ...(isMobile ? { wordBreak: "keep-all", overflowWrap: "break-word" } : {}) }}>ミニマムタックス{isMobile ? " " : " "}シミュレーター</div>
+            {!isMobile && <div style={{ fontSize: 11, color: C.textMuted, letterSpacing: 0.8 }}>2026年度税制改正対応</div>}
           </div>
         </div>
         {/* Row 2 (mobile) / inline (desktop): Tabs + About */}
@@ -608,7 +608,7 @@ export default function App() {
             {["compare", "split"].map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 style={{
-                  padding: isMobile ? "5px 12px" : "6px 16px", fontSize: 12, fontWeight: 500, borderRadius: 6, cursor: "pointer",
+                  padding: isMobile ? "5px 12px" : "7px 18px", fontSize: isMobile ? 12 : 13, fontWeight: 500, borderRadius: 6, cursor: "pointer",
                   background: activeTab === tab ? C.goldDim : "transparent",
                   color: activeTab === tab ? C.goldText : C.textSecondary,
                   border: `1px solid ${activeTab === tab ? "#BFDBFE" : C.border}`,
@@ -694,16 +694,17 @@ export default function App() {
               </div>
               {/* Hero Metrics - 2x2 grid on mobile */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-                <MetricCard label="株式譲渡所得" value={fmtOkuMan(before.stockIncome)} accent={C.gold} />
+                <MetricCard label="株式譲渡所得" value={fmtOkuMan(before.stockIncome)} accent={C.gold} compact />
                 <MetricCard
                   label="増税額"
                   value={hasImpact ? `▲${fmtOkuMan(diffTax)}` : "影響なし"}
                   sub={hasImpact ? `手取り ${fmtOkuMan(diff)}` : ""}
                   accent={hasImpact ? C.red : C.green}
                   valueColor={hasImpact ? C.redText : undefined}
+                  compact
                 />
-                <MetricCard label="改正前 手取り" value={fmtOkuMan(before.maNet)} sub={`税率 ${fmtPct(before.effMA)}`} accent={C.blue} />
-                <MetricCard label="改正後 手取り" value={fmtOkuMan(after.maNet)} sub={`税率 ${fmtPct(after.effMA)}`} accent={C.red} />
+                <MetricCard label="改正前 手取り" value={fmtOkuMan(before.maNet)} sub={`税率 ${fmtPct(before.effMA)}`} accent={C.blue} compact />
+                <MetricCard label="改正後 手取り" value={fmtOkuMan(after.maNet)} sub={`税率 ${fmtPct(after.effMA)}`} accent={C.red} compact />
               </div>
 
               {/* Comparison Table */}
@@ -819,7 +820,7 @@ export default function App() {
               <>
                 {/* MT threshold banner（増税額に連動） */}
                 <div style={{
-                  padding: "10px 14px", borderRadius: 6, marginBottom: 16, fontSize: 13, lineHeight: 1.6,
+                  padding: "12px 16px", borderRadius: 6, marginBottom: 16, fontSize: 14, lineHeight: 1.6,
                   background: hasImpact ? "#FEF2F2" : "#F0FDF4",
                   border: `1px solid ${hasImpact ? "#FECACA" : "#BBF7D0"}`,
                   color: hasImpact ? C.redText : "#166534",
@@ -844,9 +845,9 @@ export default function App() {
                 {/* Comparison Table */}
                 <Card style={{ marginBottom: 20 }}>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", marginBottom: 12 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary }}>項目</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: C.blue, textAlign: "right" }}>改正前（〜2026年）</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: C.red, textAlign: "right" }}>改正後（2027年〜）</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: C.textSecondary }}>項目</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: C.blue, textAlign: "right" }}>改正前（〜2026年）</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: C.red, textAlign: "right" }}>改正後（2027年〜）</div>
                   </div>
                   <ComparisonRow label="通常の所得税" before={before.kijunTax} after={after.kijunTax} />
                   <ComparisonRow label="ミニマムタックス追加税額" before={before.mtAdd} after={after.mtAdd} />
@@ -863,8 +864,8 @@ export default function App() {
 
                 {/* Effective Tax Rate Chart */}
                 <Card style={{ marginBottom: 20 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: C.textPrimary, marginBottom: 4 }}>実効税率チャート</div>
-                  <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 16 }}>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: C.textPrimary, marginBottom: 4 }}>実効税率チャート</div>
+                  <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 16 }}>
                     株式譲渡所得に対する総合的な税負担率の推移（縦線: 現在の入力値）
                   </div>
                   <ResponsiveContainer width="100%" height={280}>
@@ -895,9 +896,9 @@ export default function App() {
 
                 {/* Sensitivity Table */}
                 <Card>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: C.textPrimary, marginBottom: 14 }}>売却価額別の税額比較</div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: C.textPrimary, marginBottom: 14 }}>売却価額別の税額比較</div>
                   <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                       <thead>
                         <tr style={{ borderBottom: `1px solid ${C.borderLight}` }}>
                           <th style={{ textAlign: "left", padding: "8px 10px", color: C.textSecondary, fontWeight: 400 }}>譲渡額</th>
