@@ -25,9 +25,11 @@ function SplitSaleExplainer() {
       </button>
       {open && (
         <div style={{ padding: "12px 14px", fontSize: 12, lineHeight: 1.8, color: C.textSecondary, background: "#F8FAFC", borderRadius: "0 0 6px 6px", borderTop: "none", border: `1px solid ${C.border}`, borderTopWidth: 0, animation: "fadeIn 0.2s" }}>
-          <p style={{ margin: "0 0 8px" }}>ミニマムタックスの追加税額は以下の式で計算されます：</p>
-          <div style={{ background: C.white, padding: "8px 12px", borderRadius: 4, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>
-            追加税額 = max(0,（基準所得金額 − 特別控除額）× 税率 − 基準所得税額)
+          <p style={{ margin: "0 0 8px" }}>ミニマムタックスの追加税額は、以下のステップで計算されます：</p>
+          <div style={{ background: C.white, padding: "10px 12px", borderRadius: 4, fontSize: 11, marginBottom: 8, lineHeight: 1.9 }}>
+            <div>① 全所得の合計（基準所得金額）から特別控除額を差し引く</div>
+            <div>② ①の金額に税率をかけて「最低限納めるべき税額」を算出</div>
+            <div>③ 通常の税額（基準所得税額）と比較し、②が上回る分だけ追加課税</div>
           </div>
           <p style={{ margin: "0 0 8px" }}>売却代金を2年間に分けると、各年度にそれぞれ特別控除額が適用されるため、控除を2回使える分だけ課税ベースが小さくなり、税負担が軽減される場合があります。</p>
           <ul style={{ margin: "0 0 8px", paddingLeft: 20 }}>
@@ -52,13 +54,11 @@ function TaxExplainer() {
           「ミニマムタックス（最低税率確保措置）」により追加の税負担が発生します。
         </p>
 
-        <div style={{ background: "#F8FAFC", padding: "10px 12px", borderRadius: 6, border: `1px solid ${C.border}`, marginBottom: 10 }}>
-          <div style={{ fontFamily: "monospace", fontSize: 11, marginBottom: 4 }}>
-            追加税額 = max(0,（基準所得金額 − 特別控除額）× 税率 − 基準所得税額)
-          </div>
-          <div style={{ fontSize: 11, color: C.textMuted }}>
-            基準所得金額 = 所得控除「前」の全所得合計 ／ 基準所得税額 = 所得控除「後」の通常税額合計
-          </div>
+        <div style={{ background: "#F8FAFC", padding: "10px 12px", borderRadius: 6, border: `1px solid ${C.border}`, marginBottom: 10, fontSize: 11, lineHeight: 1.9 }}>
+          <div>① 全所得の合計（所得控除前）から特別控除額を差し引く</div>
+          <div>② ①の金額に税率をかけて「最低限納めるべき税額」を算出</div>
+          <div>③ 通常の税額と比較し、②が上回る分だけ追加課税される</div>
+          <div style={{ color: C.textMuted, marginTop: 4 }}>※ 通常の税額以下であれば追加課税は発生しません</div>
         </div>
 
         <div style={{ fontWeight: 600, marginBottom: 4, color: C.textPrimary }}>改正前後の違い</div>
