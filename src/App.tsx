@@ -168,17 +168,17 @@ function HelpTip({ text }) {
         }}>?</span>
       {show && (
         <div style={{
-          position: "absolute", bottom: "calc(100% + 6px)", left: "50%", transform: "translateX(-50%)",
+          position: "absolute", top: "calc(100% + 6px)", left: "50%", transform: "translateX(-50%)",
           background: C.textPrimary, color: C.white, fontSize: 11, lineHeight: 1.6,
           padding: "8px 12px", borderRadius: 6, width: 220, zIndex: 100,
           pointerEvents: "none",
         }}>
-          {text}
           <div style={{
-            position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)",
+            position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)",
             width: 0, height: 0, borderLeft: "5px solid transparent", borderRight: "5px solid transparent",
-            borderTop: `5px solid ${C.textPrimary}`,
+            borderBottom: `5px solid ${C.textPrimary}`,
           }} />
+          {text}
         </div>
       )}
     </span>
