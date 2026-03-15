@@ -586,8 +586,8 @@ export default function App() {
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: isMobile ? "10px 16px" : 0 }}>
           <img src="/willgate-ma-logo.png" alt="ウィルゲートM&A" style={{ height: isMobile ? 24 : 30, flexShrink: 0 }} />
           <div style={{ borderLeft: `1px solid ${C.border}`, paddingLeft: 12 }}>
-            <div style={{ fontSize: isMobile ? 13 : 15, fontWeight: 600, letterSpacing: 0.5 }}>ミニマムタックス シミュレーター</div>
-            {!isMobile && <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: 0.8, textTransform: "uppercase" }}>M&A Tax Impact Analysis — 2026年度税制改正対応</div>}
+            <div style={{ fontSize: isMobile ? 13 : 15, fontWeight: 600, letterSpacing: 0.5, ...(isMobile ? { wordBreak: "keep-all", overflowWrap: "break-word" } : {}) }}>ミニマムタックス{isMobile ? " " : " "}シミュレーター</div>
+            {!isMobile && <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: 0.8 }}>2026年度税制改正対応</div>}
           </div>
         </div>
         {/* Row 2 (mobile) / inline (desktop): Tabs + About */}
