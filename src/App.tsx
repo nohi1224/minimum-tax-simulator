@@ -718,7 +718,7 @@ export default function App() {
 
               {/* Sensitivity Table - card-based on mobile */}
               <Card style={{ padding: 16 }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: C.textPrimary, marginBottom: 12 }}>感応度テーブル</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: C.textPrimary, marginBottom: 12 }}>売却価額別の税額比較</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {sensitivityData.map((d, i) => (
                     <div key={i} style={{
@@ -833,7 +833,7 @@ export default function App() {
 
                 {/* Sensitivity Table */}
                 <Card>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: C.textPrimary, marginBottom: 14 }}>感応度テーブル</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: C.textPrimary, marginBottom: 14 }}>売却価額別の税額比較</div>
                   <div style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                       <thead>
