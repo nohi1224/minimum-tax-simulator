@@ -538,6 +538,13 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("compare");
   const [showAbout, setShowAbout] = useState(false);
   const [showInputPanel, setShowInputPanel] = useState(false);
+  const [showGuide, setShowGuide] = useState(() => {
+    try { return !localStorage.getItem("mt-guide-dismissed"); } catch { return true; }
+  });
+  const dismissGuide = () => {
+    setShowGuide(false);
+    try { localStorage.setItem("mt-guide-dismissed", "1"); } catch {}
+  };
 
   const params = useMemo(() => ({
     stockPrice, stockCost, salaryRev, otherIncome,
@@ -638,16 +645,33 @@ export default function App() {
         /* Mobile: single column layout */
         <div style={{ padding: 16 }}>
           {/* Collapsible input panel */}
-          <button onClick={() => setShowInputPanel(!showInputPanel)}
-            style={{
-              width: "100%", padding: "10px 14px", fontSize: 13, fontWeight: 500,
-              color: C.goldText, background: C.goldDim, border: `1px solid #BFDBFE`,
-              borderRadius: 8, cursor: "pointer", marginBottom: 16, textAlign: "left",
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-            }}>
-            <span>{showInputPanel ? "▾" : "▸"} 入力条件を{showInputPanel ? "閉じる" : "開く"}</span>
-            <span style={{ fontSize: 12, color: C.textSecondary }}>{fmtOkuMan(stockPrice)}</span>
-          </button>
+          <div style={{ position: "relative" }}>
+            <button onClick={() => { setShowInputPanel(!showInputPanel); if (showGuide) dismissGuide(); }}
+              style={{
+                width: "100%", padding: "10px 14px", fontSize: 13, fontWeight: 500,
+                color: C.goldText, background: C.goldDim, border: `1px solid #BFDBFE`,
+                borderRadius: 8, cursor: "pointer", marginBottom: showGuide && !showInputPanel ? 0 : 16, textAlign: "left",
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+              }}>
+              <span>{showInputPanel ? "▾" : "▸"} 入力条件を{showInputPanel ? "閉じる" : "開く"}</span>
+              <span style={{ fontSize: 12, color: C.textSecondary }}>{fmtOkuMan(stockPrice)}</span>
+            </button>
+            {showGuide && !showInputPanel && (
+              <div onClick={dismissGuide} style={{
+                margin: "0 0 16px", padding: "10px 14px", borderRadius: 8,
+                background: C.textPrimary, color: C.white, fontSize: 12, lineHeight: 1.6,
+                animation: "fadeIn 0.3s", cursor: "pointer", position: "relative",
+              }}>
+                <div style={{
+                  position: "absolute", top: -6, left: 24,
+                  width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent",
+                  borderBottom: `6px solid ${C.textPrimary}`,
+                }} />
+                まず上のボタンを押して、<strong>株式の売却価格</strong>を入力してください。
+                <span style={{ fontSize: 10, color: "#94A3B8", marginLeft: 8 }}>タップで閉じる</span>
+              </div>
+            )}
+          </div>
 
           {showInputPanel && (
             <Card style={{ marginBottom: 16, padding: 16, animation: "fadeIn 0.2s" }}>
@@ -776,6 +800,16 @@ export default function App() {
         <div style={{ display: "grid", gridTemplateColumns: "320px minmax(0, 1fr)", minHeight: "calc(100vh - 65px)" }}>
           {/* Sidebar */}
           <div style={{ borderRight: `1px solid ${C.border}`, padding: 24, overflowY: "auto", background: C.white }}>
+            {showGuide && (
+              <div onClick={dismissGuide} style={{
+                marginBottom: 16, padding: "10px 14px", borderRadius: 8,
+                background: C.textPrimary, color: C.white, fontSize: 12, lineHeight: 1.6,
+                animation: "fadeIn 0.3s", cursor: "pointer",
+              }}>
+                まず下の入力欄で、<strong>株式の売却価格</strong>を入力してください。
+                <span style={{ fontSize: 10, color: "#94A3B8", marginLeft: 8 }}>クリックで閉じる</span>
+              </div>
+            )}
             <InputPanel {...inputPanelProps} />
           </div>
 
