@@ -291,11 +291,11 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
           onChange={e => setSplitRatio(Number(e.target.value))}
           style={{ width: "100%", accentColor: C.gold, height: 6, cursor: "pointer" }} />
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: C.textMuted, marginTop: 4 }}>
-          <span>全量2027年</span><span>全量2026年</span>
+          <span>全量2027年以降</span><span>全量2026年</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: C.textPrimary, marginTop: 8, padding: "8px 12px", background: C.goldDim, borderRadius: 6, border: `1px solid #BFDBFE` }}>
           <span>2026年に <strong style={{ color: C.goldText }}>{fmtOkuMan(scenarios.y1Price)}</strong> 売却</span>
-          <span>2027年に <strong style={{ color: C.goldText }}>{fmtOkuMan(scenarios.y2Price)}</strong> 売却</span>
+          <span>2027年以降に <strong style={{ color: C.goldText }}>{fmtOkuMan(scenarios.y2Price)}</strong> 売却</span>
         </div>
       </div>
 
@@ -303,10 +303,10 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr", gap: 10, marginBottom: 20 }}>
         <div style={{ background: C.greenDim, borderRadius: 8, padding: "14px 16px", border: `1px solid #A7F3D0` }}>
           <div style={{ fontSize: 12, fontWeight: 600, color: "#059669" }}>
-            {splitRatio === 0 ? "2027年に一括売却した場合" : splitRatio === 100 ? "2026年に一括売却した場合" : "年度またぎの売却結果"}
+            {splitRatio === 0 ? "2027年以降に一括売却した場合" : splitRatio === 100 ? "2026年に一括売却した場合" : "年度またぎの売却結果"}
           </div>
           <div style={{ fontSize: 10, color: C.textMuted, marginTop: 2 }}>
-            {splitRatio === 0 ? `全額（${fmtOkuMan(total)}）を2027年に売却` : splitRatio === 100 ? `全額（${fmtOkuMan(total)}）を2026年に売却` : `2026年に${fmtOkuMan(scenarios.y1Price)} + 2027年に${fmtOkuMan(scenarios.y2Price)}`}
+            {splitRatio === 0 ? `全額（${fmtOkuMan(total)}）を2027年以降に売却` : splitRatio === 100 ? `全額（${fmtOkuMan(total)}）を2026年に売却` : `2026年に${fmtOkuMan(scenarios.y1Price)} + 2027年以降に${fmtOkuMan(scenarios.y2Price)}`}
           </div>
           <div style={{ fontSize: 20, fontWeight: 600, color: "#059669", marginTop: 8 }}>{fmtOkuMan(cNet)}</div>
           <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>実効税率 {fmtPct(cEff)}</div>
@@ -345,7 +345,7 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
                 <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontWeight: 500, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(scenarios.y1Price - rC1.stockTotalTax)}</td>
               </tr>
               <tr>
-                <td style={{ padding: "8px 12px", color: C.textPrimary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>2年目（2027年）</td>
+                <td style={{ padding: "8px 12px", color: C.textPrimary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>2年目（2027年以降）</td>
                 <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(scenarios.y2Price)}</td>
                 <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(rC2.stockTotalTax)}</td>
                 <td style={{ padding: "8px 12px", textAlign: "right", fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}`, color: rC2.triggered ? C.redText : C.textMuted }}>{rC2.triggered ? fmtOkuMan(rC2.mtAdd) : "なし"}</td>
@@ -503,9 +503,9 @@ export default function App() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
         background: C.white, flexWrap: isMobile ? "wrap" : "nowrap", gap: isMobile ? 8 : 0,
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 6, background: C.gold, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: C.white, flexShrink: 0 }}>M</div>
-          <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <img src="/willgate-ma-logo.png" alt="ウィルゲートM&A" style={{ height: isMobile ? 24 : 30, flexShrink: 0 }} />
+          <div style={{ borderLeft: `1px solid ${C.border}`, paddingLeft: 12 }}>
             <div style={{ fontSize: isMobile ? 13 : 15, fontWeight: 600, letterSpacing: 0.5 }}>ミニマムタックス シミュレーター</div>
             {!isMobile && <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: 0.8, textTransform: "uppercase" }}>M&A Tax Impact Analysis — 2026年度税制改正対応</div>}
           </div>
