@@ -42,36 +42,44 @@ function SplitSaleExplainer() {
 }
 
 function TaxExplainer() {
-  const [open, setOpen] = useState(false);
   return (
     <Card style={{ marginTop: 16 }}>
-      <button onClick={() => setOpen(!open)}
-        style={{ width: "100%", padding: "8px 14px", fontSize: 12, color: C.textSecondary, background: "#F8FAFC", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}>
-        {open ? "▾" : "▸"} ミニマムタックスの計算方法
-      </button>
-      {open && (
-        <div style={{ padding: "12px 14px", fontSize: 12, lineHeight: 1.8, color: C.textSecondary, background: "#F8FAFC", borderRadius: "0 0 6px 6px", borderTop: "none", border: `1px solid ${C.border}`, borderTopWidth: 0, animation: "fadeIn 0.2s" }}>
-          <div style={{ fontWeight: 600, marginBottom: 4 }}>【通常の税額】</div>
-          <p style={{ margin: "0 0 8px" }}>株式譲渡所得 × 15%（所得税）+ 5%（住民税）= 約20.315%（復興税含む）</p>
+      <div style={{ fontSize: 13, fontWeight: 600, color: C.textPrimary, marginBottom: 10 }}>ミニマムタックスとは</div>
+      <div style={{ fontSize: 12, lineHeight: 1.8, color: C.textSecondary }}>
+        <p style={{ margin: "0 0 8px" }}>
+          株式譲渡所得には通常 約20.315% の税率が適用されますが、
+          <strong style={{ color: C.goldText }}>譲渡所得が約3.3億円を超える</strong>と、
+          「ミニマムタックス（最低税率確保措置）」により追加の税負担が発生します。
+        </p>
 
-          <div style={{ fontWeight: 600, marginBottom: 4 }}>【ミニマムタックス追加税額】</div>
-          <div style={{ background: C.white, padding: "8px 12px", borderRadius: 4, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>
+        <div style={{ background: "#F8FAFC", padding: "10px 12px", borderRadius: 6, border: `1px solid ${C.border}`, marginBottom: 10 }}>
+          <div style={{ fontFamily: "monospace", fontSize: 11, marginBottom: 4 }}>
             追加税額 = max(0,（基準所得金額 − 特別控除額）× 税率 − 基準所得税額)
           </div>
-          <ul style={{ margin: "0 0 8px", paddingLeft: 20 }}>
-            <li>基準所得金額: 所得控除「前」の全所得合計</li>
-            <li>基準所得税額: 所得控除「後」の通常の税額合計</li>
-            <li>住民税にはミニマムタックスは適用されません</li>
-          </ul>
-
-          <div style={{ fontWeight: 600, marginBottom: 4 }}>【改正前後の違い】</div>
-          <ul style={{ margin: "0 0 8px", paddingLeft: 20 }}>
-            <li>改正前（〜2026年）: 特別控除 3億3,000万円 / 税率 22.5%</li>
-            <li>改正後（2027年〜）: 特別控除 1億6,500万円 / 税率 30%</li>
-          </ul>
-          <p style={{ margin: 0 }}>改正後は対象となる所得水準が大幅に引き下げられ、税率も上がるため、約3.3億円超の譲渡所得から追加課税の影響が出始めます。</p>
+          <div style={{ fontSize: 11, color: C.textMuted }}>
+            基準所得金額 = 所得控除「前」の全所得合計 ／ 基準所得税額 = 所得控除「後」の通常税額合計
+          </div>
         </div>
-      )}
+
+        <div style={{ fontWeight: 600, marginBottom: 4, color: C.textPrimary }}>改正前後の違い</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
+          <div style={{ background: "#F0F7FF", padding: "8px 10px", borderRadius: 6, fontSize: 11 }}>
+            <div style={{ fontWeight: 600, color: C.blue, marginBottom: 2 }}>改正前（〜2026年）</div>
+            <div>特別控除: 3億3,000万円</div>
+            <div>税率: 22.5%</div>
+          </div>
+          <div style={{ background: "#FFF5F5", padding: "8px 10px", borderRadius: 6, fontSize: 11 }}>
+            <div style={{ fontWeight: 600, color: C.red, marginBottom: 2 }}>改正後（2027年〜）</div>
+            <div>特別控除: 1億6,500万円</div>
+            <div>税率: 30%</div>
+          </div>
+        </div>
+
+        <p style={{ margin: 0, fontSize: 12 }}>
+          改正後は特別控除額が半減し税率も上がるため、<strong style={{ color: C.goldText }}>約3.3億円超の譲渡所得</strong>から追加課税の影響が出始めます。
+          譲渡価額が大きいほど影響額も拡大するため、売却タイミングの検討が重要です。
+        </p>
+      </div>
     </Card>
   );
 }
