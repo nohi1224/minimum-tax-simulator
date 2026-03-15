@@ -290,7 +290,11 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
 
       {/* 1. 導入セクション */}
       <div style={{ fontSize: 12, color: C.textSecondary, lineHeight: 1.7, marginBottom: 20, padding: "10px 14px", background: "#F8FAFC", borderRadius: 8, border: `1px solid ${C.border}` }}>
-        売却を2026年と2027年に分けることで、税制改正の影響を軽減できる場合があります。以下で最適な売却タイミングをご確認ください。
+        {!rA.triggered && !rB.triggered
+          ? "この金額帯では追加課税（ミニマムタックス）の対象外のため、改正前・改正後で手取り額に大きな差はありません。"
+          : !rA.triggered && rB.triggered
+            ? "この金額帯では、改正前（2026年中）にまとめて売却すれば追加課税は発生しません。改正後に売却すると追加課税の対象となるため、売却時期が重要です。"
+            : "この金額帯では改正前でも追加課税が発生する可能性があります。2年に分けて売却することで、各年の課税負担を抑えられる場合があります。"}
       </div>
 
       {/* 6. スライダー（金額表示付き） */}
@@ -478,6 +482,7 @@ export default function App() {
   const [deductions, setDeductions] = useState(200);
   const [netMode, setNetMode] = useState("ma");
   const [activeTab, setActiveTab] = useState("compare");
+  const [showAbout, setShowAbout] = useState(false);
   const [showInputPanel, setShowInputPanel] = useState(false);
 
   const params = useMemo(() => ({
@@ -527,7 +532,7 @@ export default function App() {
             {!isMobile && <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: 0.8, textTransform: "uppercase" }}>M&A Tax Impact Analysis — 2026年度税制改正対応</div>}
           </div>
         </div>
-        <div style={{ display: "flex", gap: 6 }}>
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
           {["compare", "split"].map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               style={{
@@ -540,6 +545,14 @@ export default function App() {
               {tab === "compare" ? "改正前後比較" : "分割売却"}
             </button>
           ))}
+          <button onClick={() => setShowAbout(true)}
+            style={{
+              padding: isMobile ? "5px 8px" : "6px 12px", fontSize: 11, fontWeight: 400, borderRadius: 6, cursor: "pointer",
+              background: "transparent", color: C.textMuted, border: "none",
+              textDecoration: "underline", textUnderlineOffset: 2,
+            }}>
+            このツールについて
+          </button>
         </div>
       </div>
 
@@ -586,7 +599,7 @@ export default function App() {
                   <div style={{ fontSize: 12, fontWeight: 600, color: C.red, textAlign: "right" }}>改正後</div>
                 </div>
                 <ComparisonRow label="通常の所得税" before={before.kijunTax} after={after.kijunTax} isMobile />
-                <ComparisonRow label="MT追加税額" before={before.mtAdd} after={after.mtAdd} isMobile />
+                <ComparisonRow label="ミニマムタックス追加税額" before={before.mtAdd} after={after.mtAdd} isMobile />
                 <ComparisonRow label="復興特別所得税" before={before.recon} after={after.recon} isMobile />
                 <ComparisonRow label="住民税" before={before.totalRes} after={after.totalRes} isMobile />
                 <ComparisonRow label="税額合計" before={before.totalTax} after={after.totalTax} isBold isMobile />
@@ -783,6 +796,62 @@ export default function App() {
             ) : (
               <SplitSaleSimulation stockPrice={stockPrice} stockCost={stockCost} params={params} isMobile={false} />
             )}
+          </div>
+        </div>
+      )}
+
+      {/* このツールについて モーダル */}
+      {showAbout && (
+        <div onClick={() => setShowAbout(false)} style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 1000,
+          display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: C.white, borderRadius: 12, maxWidth: 600, width: "100%",
+            maxHeight: "80vh", overflowY: "auto", padding: isMobile ? "20px 16px" : "28px 32px",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+              <h2 style={{ fontSize: 17, fontWeight: 600, color: C.textPrimary, margin: 0 }}>このツールについて</h2>
+              <button onClick={() => setShowAbout(false)} style={{
+                background: "none", border: "none", fontSize: 20, color: C.textMuted, cursor: "pointer", padding: "0 4px", lineHeight: 1,
+              }}>&times;</button>
+            </div>
+
+            <section style={{ marginBottom: 20 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: C.goldText, marginBottom: 6 }}>税制改正の概要</h3>
+              <p style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.8, margin: 0 }}>
+                2026年度（令和8年度）税制改正により、高額所得者への追加課税（ミニマムタックス）が強化されます。
+                改正前は基準所得3.3億円超・税率22.5%ですが、改正後（2027年分〜）は基準所得1.65億円超・税率30%に引き下げ・引き上げとなり、
+                課税対象が大幅に拡大します。
+              </p>
+            </section>
+
+            <section style={{ marginBottom: 20 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: C.goldText, marginBottom: 6 }}>株式売却オーナーへの影響</h3>
+              <p style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.8, margin: 0 }}>
+                M&Aで非上場株式を売却するオーナー社長にとって、売却時期が手取り額に大きく影響します。
+                株式譲渡所得は通常15%（住民税5%を加え約20%）の分離課税ですが、
+                ミニマムタックスの対象となると実効税率が上昇し、数千万円〜数億円規模で手取り額が変わる可能性があります。
+                改正後は約3.3億円超の譲渡所得から追加課税が発生するため、影響を受ける方が大幅に増えます。
+              </p>
+            </section>
+
+            <section style={{ marginBottom: 20 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: C.goldText, marginBottom: 6 }}>2つの機能について</h3>
+              <div style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.8 }}>
+                <p style={{ margin: "0 0 8px 0" }}>
+                  <strong style={{ color: C.textPrimary }}>改正前後比較</strong>：同じ売却額を改正前（2026年中）と改正後（2027年以降）に売却した場合の手取り額を比較します。改正による増税額を一目で確認できます。
+                </p>
+                <p style={{ margin: 0 }}>
+                  <strong style={{ color: C.textPrimary }}>分割売却</strong>：売却を2026年と2027年の2年に分割した場合の手取り額をシミュレーションします。各年の売却割合を変えながら、最も有利な売却タイミングを検討できます。
+                </p>
+              </div>
+            </section>
+
+            <div style={{ fontSize: 11, color: C.textMuted, lineHeight: 1.6, padding: "10px 12px", background: "#F8FAFC", borderRadius: 6 }}>
+              ※ 本シミュレーションは令和8年度税制改正大綱に基づく概算です。法案成立後の最終的な条文により結果が異なる場合があります。実際のお取引に際しては税理士等の専門家にご相談ください。
+            </div>
           </div>
         </div>
       )}
