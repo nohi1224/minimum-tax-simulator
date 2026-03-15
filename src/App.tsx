@@ -266,15 +266,34 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
 
   const { rA, rB, cNet, cEff, rC1, rC2 } = scenarios;
 
+  // 結論メッセージ: 最も手取りが多いシナリオを判定
+  const bestScenario = useMemo(() => {
+    const nets = [
+      { key: "A", label: "改正前にまとめて売却", net: rA.maNet },
+      { key: "B", label: "改正後にまとめて売却", net: rB.maNet },
+      { key: "C", label: "2年に分けて売却", net: cNet },
+    ];
+    const best = nets.reduce((a, b) => a.net > b.net ? a : b);
+    const worst = nets.reduce((a, b) => a.net < b.net ? a : b);
+    const diff = best.net - worst.net;
+    return { ...best, diff, worstLabel: worst.label };
+  }, [rA.maNet, rB.maNet, cNet]);
+
   return (
     <Card style={{ marginTop: 16, padding: isMobile ? "16px" : "20px 24px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, color: C.textPrimary, margin: 0 }}>分割売却シミュレーション</h3>
         <span style={{ fontSize: 11, color: C.textSecondary, background: C.goldDim, padding: "3px 10px", borderRadius: 4 }}>
           総額 {fmtOkuMan(total)}
         </span>
       </div>
 
+      {/* 1. 導入セクション */}
+      <div style={{ fontSize: 12, color: C.textSecondary, lineHeight: 1.7, marginBottom: 20, padding: "10px 14px", background: "#F8FAFC", borderRadius: 8, border: `1px solid ${C.border}` }}>
+        売却を2026年と2027年に分けることで、税制改正の影響を軽減できる場合があります。以下で最適な売却タイミングをご確認ください。
+      </div>
+
+      {/* 6. スライダー（金額表示付き） */}
       <div style={{ marginBottom: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
           <span style={{ fontSize: 12, color: C.textSecondary }}>2026年の売却割合</span>
@@ -286,45 +305,94 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: C.textMuted, marginTop: 4 }}>
           <span>全量2027年</span><span>全量2026年</span>
         </div>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: C.textPrimary, marginTop: 8, padding: "8px 12px", background: C.goldDim, borderRadius: 6, border: `1px solid #BFDBFE` }}>
+          <span>2026年に <strong style={{ color: C.goldText }}>{fmtOkuMan(scenarios.y1Price)}</strong> 売却</span>
+          <span>2027年に <strong style={{ color: C.goldText }}>{fmtOkuMan(scenarios.y2Price)}</strong> 売却</span>
+        </div>
       </div>
 
+      {/* 2. シナリオカード（ラベル改善） */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
-        <div style={{ background: C.blueDim, borderRadius: 8, padding: "12px 14px", border: `1px solid #BFDBFE` }}>
-          <div style={{ fontSize: 11, color: C.textSecondary }}>A: 2026年全量</div>
-          <div style={{ fontSize: 16, fontWeight: 600, color: C.blue, marginTop: 4 }}>{fmtOkuMan(rA.maNet)}</div>
-          <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>税率 {fmtPct(rA.effMA)}</div>
+        <div style={{ background: C.blueDim, borderRadius: 8, padding: "12px 14px", border: `1px solid #BFDBFE`, position: "relative" }}>
+          {bestScenario.key === "A" && <div style={{ position: "absolute", top: -8, right: 8, fontSize: 10, fontWeight: 600, color: C.white, background: C.blue, padding: "2px 8px", borderRadius: 4 }}>最有利</div>}
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.blue }}>改正前にまとめて売却</div>
+          <div style={{ fontSize: 10, color: C.textMuted, marginTop: 2 }}>2026年中に全額売却</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: C.blue, marginTop: 6 }}>{fmtOkuMan(rA.maNet)}</div>
+          <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>実効税率 {fmtPct(rA.effMA)}</div>
         </div>
-        <div style={{ background: C.redDim, borderRadius: 8, padding: "12px 14px", border: `1px solid #FECACA` }}>
-          <div style={{ fontSize: 11, color: C.textSecondary }}>B: 2027年全量</div>
-          <div style={{ fontSize: 16, fontWeight: 600, color: C.redText, marginTop: 4 }}>{fmtOkuMan(rB.maNet)}</div>
-          <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>税率 {fmtPct(rB.effMA)}</div>
+        <div style={{ background: C.redDim, borderRadius: 8, padding: "12px 14px", border: `1px solid #FECACA`, position: "relative" }}>
+          {bestScenario.key === "B" && <div style={{ position: "absolute", top: -8, right: 8, fontSize: 10, fontWeight: 600, color: C.white, background: C.redText, padding: "2px 8px", borderRadius: 4 }}>最有利</div>}
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.redText }}>改正後にまとめて売却</div>
+          <div style={{ fontSize: 10, color: C.textMuted, marginTop: 2 }}>2027年以降に全額売却</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: C.redText, marginTop: 6 }}>{fmtOkuMan(rB.maNet)}</div>
+          <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>実効税率 {fmtPct(rB.effMA)}</div>
         </div>
-        <div style={{ background: C.greenDim, borderRadius: 8, padding: "12px 14px", border: `1px solid #A7F3D0` }}>
-          <div style={{ fontSize: 11, color: C.textSecondary }}>C: {splitRatio}:{100-splitRatio} 分割</div>
-          <div style={{ fontSize: 16, fontWeight: 600, color: "#059669", marginTop: 4 }}>{fmtOkuMan(cNet)}</div>
-          <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>税率 {fmtPct(cEff)}</div>
+        <div style={{ background: C.greenDim, borderRadius: 8, padding: "12px 14px", border: `1px solid #A7F3D0`, position: "relative" }}>
+          {bestScenario.key === "C" && <div style={{ position: "absolute", top: -8, right: 8, fontSize: 10, fontWeight: 600, color: C.white, background: "#059669", padding: "2px 8px", borderRadius: 4 }}>最有利</div>}
+          <div style={{ fontSize: 12, fontWeight: 600, color: "#059669" }}>2年に分けて売却</div>
+          <div style={{ fontSize: 10, color: C.textMuted, marginTop: 2 }}>2026年に{fmtOkuMan(scenarios.y1Price)} + 2027年に{fmtOkuMan(scenarios.y2Price)}</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "#059669", marginTop: 6 }}>{fmtOkuMan(cNet)}</div>
+          <div style={{ fontSize: 11, color: C.textSecondary, marginTop: 2 }}>実効税率 {fmtPct(cEff)}</div>
         </div>
       </div>
 
+      {/* 3. 分割詳細セクション（表形式） */}
       {splitRatio > 0 && splitRatio < 100 && (
-        <div style={{ fontSize: 12, color: C.textSecondary, marginBottom: 16, padding: "10px 14px", background: "#F8FAFC", borderRadius: 8, border: `1px solid ${C.border}` }}>
-          <div style={{ marginBottom: 4 }}>
-            <span style={{ color: C.textMuted }}>1年目（2026年・改正前）:</span>{" "}
-            {fmtOkuMan(scenarios.y1Price)} → MT {rC1.triggered ? <span style={{color: C.redText}}>発動</span> : "なし"}
-          </div>
-          <div>
-            <span style={{ color: C.textMuted }}>2年目（2027年・改正後）:</span>{" "}
-            {fmtOkuMan(scenarios.y2Price)} → MT {rC2.triggered ? <span style={{color: C.redText}}>発動</span> : "なし"}
-          </div>
+        <div style={{ marginBottom: 16, borderRadius: 8, border: `1px solid ${C.border}`, overflow: "hidden" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: isMobile ? 11 : 12 }}>
+            <thead>
+              <tr style={{ background: "#F8FAFC" }}>
+                <th style={{ padding: "8px 12px", textAlign: "left", color: C.textSecondary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}></th>
+                <th style={{ padding: "8px 12px", textAlign: "right", color: C.textSecondary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>売却額</th>
+                <th style={{ padding: "8px 12px", textAlign: "right", color: C.textSecondary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>税額</th>
+                <th style={{ padding: "8px 12px", textAlign: "right", color: C.textSecondary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>追加課税</th>
+                <th style={{ padding: "8px 12px", textAlign: "right", color: C.textSecondary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>手取り</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ padding: "8px 12px", color: C.textPrimary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>1年目（2026年）</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(scenarios.y1Price)}</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(rC1.stockTotalTax)}</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}`, color: rC1.triggered ? C.redText : C.textMuted }}>{rC1.triggered ? fmtOkuMan(rC1.mtAdd) : "なし"}</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontWeight: 500, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(scenarios.y1Price - rC1.stockTotalTax)}</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "8px 12px", color: C.textPrimary, fontWeight: 500, borderBottom: `1px solid ${C.border}` }}>2年目（2027年）</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(scenarios.y2Price)}</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(rC2.stockTotalTax)}</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}`, color: rC2.triggered ? C.redText : C.textMuted }}>{rC2.triggered ? fmtOkuMan(rC2.mtAdd) : "なし"}</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontWeight: 500, fontFeatureSettings: "'tnum'", borderBottom: `1px solid ${C.border}` }}>{fmtOkuMan(scenarios.y2Price - rC2.stockTotalTax)}</td>
+              </tr>
+              <tr style={{ background: "#F8FAFC" }}>
+                <td style={{ padding: "8px 12px", color: C.textPrimary, fontWeight: 600 }}>2年間合計</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontWeight: 600, fontFeatureSettings: "'tnum'" }}>{fmtOkuMan(total)}</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: C.textPrimary, fontWeight: 600, fontFeatureSettings: "'tnum'" }}>{fmtOkuMan(scenarios.cTax)}</td>
+                <td style={{ padding: "8px 12px", textAlign: "right", fontFeatureSettings: "'tnum'", color: C.textMuted }}></td>
+                <td style={{ padding: "8px 12px", textAlign: "right", color: "#059669", fontWeight: 700, fontSize: isMobile ? 13 : 14, fontFeatureSettings: "'tnum'" }}>{fmtOkuMan(cNet)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       )}
 
-      <div style={{ fontSize: 13, fontWeight: 500, color: C.textSecondary, marginBottom: 8 }}>最適分割比率チャート</div>
+      {/* 4. 結論メッセージ */}
+      <div style={{ marginBottom: 20, padding: "12px 16px", background: bestScenario.key === "A" ? C.blueDim : bestScenario.key === "B" ? C.redDim : C.greenDim, borderRadius: 8, border: `1px solid ${bestScenario.key === "A" ? "#BFDBFE" : bestScenario.key === "B" ? "#FECACA" : "#A7F3D0"}` }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: C.textPrimary, marginBottom: 4 }}>
+          「{bestScenario.label}」が最も有利です
+        </div>
+        <div style={{ fontSize: 12, color: C.textSecondary, lineHeight: 1.6 }}>
+          {bestScenario.worstLabel}と比べて、<strong style={{ color: bestScenario.key === "A" ? C.blue : bestScenario.key === "B" ? C.redText : "#059669" }}>{fmtOkuMan(bestScenario.diff)}</strong> 多く手元に残ります。
+        </div>
+      </div>
+
+      {/* 5. チャート（タイトル・ラベル改善） */}
+      <div style={{ fontSize: 13, fontWeight: 500, color: C.textSecondary, marginBottom: 8 }}>2026年の売却割合と手取り額の関係</div>
       <ResponsiveContainer width="100%" height={isMobile ? 180 : 200}>
         <BarChart data={chartData} margin={{ top: 5, right: 5, left: isMobile ? -10 : 5, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-          <XAxis dataKey="pct" tick={{ fontSize: isMobile ? 9 : 11, fill: C.textSecondary }} />
-          <YAxis tick={{ fontSize: isMobile ? 9 : 11, fill: C.textSecondary }} tickFormatter={v => fmtOku(v)} domain={['auto', 'auto']} />
+          <XAxis dataKey="pct" tick={{ fontSize: isMobile ? 9 : 11, fill: C.textSecondary }} label={isMobile ? undefined : { value: "2026年の売却割合", position: "insideBottom", offset: -2, fontSize: 10, fill: C.textMuted }} />
+          <YAxis tick={{ fontSize: isMobile ? 9 : 11, fill: C.textSecondary }} tickFormatter={v => fmtOku(v)} domain={['auto', 'auto']} label={isMobile ? undefined : { value: "2年間の手取り額", angle: -90, position: "insideLeft", offset: 10, fontSize: 10, fill: C.textMuted }} />
           <Tooltip
             contentStyle={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 6, fontSize: 12, color: C.textPrimary }}
             formatter={(v) => [fmtOkuMan(v), "2年間手取り"]}
@@ -338,9 +406,9 @@ function SplitSaleSimulation({ stockPrice, stockCost, params, isMobile }) {
         </BarChart>
       </ResponsiveContainer>
       <div style={{ fontSize: 11, color: C.textSecondary, textAlign: "center", marginTop: 6 }}>
-        最適: 2026年に<span style={{ color: C.goldText, fontWeight: 600 }}>{bestPct.label}%</span>売却
-        （手取り {fmtOkuMan(bestPct.net)}）
-        {!isMobile && <span style={{ color: C.textMuted, marginLeft: 8 }}>--- 青線: 2026年全量売却時</span>}
+        最適: 2026年に<span style={{ color: C.goldText, fontWeight: 600 }}>{bestPct.label}%</span>（{fmtOkuMan(Math.round(total * bestPct.label / 100))}）を売却
+        → 手取り {fmtOkuMan(bestPct.net)}
+        {!isMobile && <span style={{ color: C.textMuted, marginLeft: 8 }}>--- 青線: 改正前にまとめて売却した場合</span>}
       </div>
     </Card>
   );
