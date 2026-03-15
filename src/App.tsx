@@ -508,6 +508,11 @@ function InputPanel({ stockPrice, setStockPrice, stockCost, setStockCost, showDe
             </button>
           ))}
         </div>
+        <div style={{ fontSize: 10, color: C.textMuted, marginTop: 6, lineHeight: 1.6 }}>
+          {netMode === "ma"
+            ? "株式売却による手取り額のみを表示します"
+            : "給与・その他の所得も含めた年間の手取り総額を表示します"}
+        </div>
       </div>
 
       <div style={{ marginTop: 24, padding: 14, background: C.redDim, borderRadius: 6, border: `1px solid #FECACA` }}>
