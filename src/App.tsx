@@ -21,7 +21,7 @@ function SplitSaleExplainer() {
     <div style={{ marginTop: 16 }}>
       <button onClick={() => setOpen(!open)}
         style={{ width: "100%", padding: "8px 14px", fontSize: 12, color: C.textSecondary, background: "#F8FAFC", border: `1px solid ${C.border}`, borderRadius: 6, cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}>
-        {open ? "▾" : "▸"} なぜ年度をまたぐと税負担が変わるのか？
+        {open ? "▾" : "▸"} 総額が約9.9億円超の株式譲渡の場合、年度をまたぐことで手取りが増える場合があります
       </button>
       {open && (
         <div style={{ padding: "12px 14px", fontSize: 12, lineHeight: 1.8, color: C.textSecondary, background: "#F8FAFC", borderRadius: "0 0 6px 6px", borderTop: "none", border: `1px solid ${C.border}`, borderTopWidth: 0, animation: "fadeIn 0.2s" }}>
